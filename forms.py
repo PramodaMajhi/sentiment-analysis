@@ -23,6 +23,6 @@ class LoginForm(FlaskForm):
 
 class ReviewTextForm(FlaskForm):
     reviewText = TextAreaField('Your Review Text',
-                        validators=[DataRequired(), Length(min=2, max=150)])
+                        validators=[DataRequired(), Length(min=2, max=250)])
 
-    submit = SubmitField('Test')
+    submit = SubmitField('Analyze')
