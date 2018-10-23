@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Sentiment Analysis - Demo</h1>
+    <h1>Demo: Sentiment Analysis Result</h1>
     <br>
 <div class="content-section">
     <form method="POST" action="">
@@ -15,4 +15,9 @@
         </div>
     </form>
 </div>
+    <div class="form-group">
+        <medium class="text-muted">
+           <a class="ml-2" href="{{ url_for('comment') }}">Clear</a>
+        </medium>
+    </div>
 {% endblock %}

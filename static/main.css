@@ -78,3 +78,19 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+.imagediv {
+    padding-top: 15px;
+    /* padding: 40px; */
+    text-align: center
+}
+.img {
+    vertical-align: middle;
+    border-style: none;
+    height: 90px;
+    width: 90px;
+    padding: 10px;
+ }
+ .alert-success {
+    text-align: center; !important;
+}

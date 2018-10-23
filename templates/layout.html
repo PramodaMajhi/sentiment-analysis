@@ -35,6 +35,16 @@
               {% for category, message in messages %}
                 <div class="alert alert-{{ category }}">
                   {{ message }}
+                   {% if category == 'success' %}
+                       <div class="imagediv" style="text-align:center">
+                           <img src="{{url_for('static', filename='happy.png')}}" />
+                       </div>
+                     {% else %}
+                        <div class="imagediv" style="text-align:center">
+                           <img src="{{url_for('static', filename='disappointed-face.png')}}" />
+                       </div>
+                   {% endif %}
+
                 </div>
               {% endfor %}
             {% endif %}
