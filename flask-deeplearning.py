@@ -49,6 +49,7 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
+
 @app.route("/comment", methods=['GET', 'POST'])
 def comment():
     form = ReviewTextForm()
