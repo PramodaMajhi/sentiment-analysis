@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, ReviewTextForm
 from sklearn.externals import joblib
+from keras import backend as K
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
@@ -56,14 +57,15 @@ def comment():
         newVector = joblib.load('classfical-vectorizer.joblib')
         newModel = joblib.load('classical-model.joblib')
         myVectortest = newVector.transform([form.reviewText.data])
-        joblibPrectict = newModel.predict(myVectortest)
-        print(joblibPrectict)
-        for index, feedback in enumerate(joblibPrectict):
-            if feedback == 1:
-                flash('Your sentiment is positive!', 'success')
-                # return redirect(url_for('comment'))
-            else:
-                flash('Your sentiment is negative', 'warning')
+        actualPredict = newModel.predict(myVectortest)
+        feedback = (actualPredict > 0.5)
+        if feedback:
+            flash('Your feedback is positive!', 'success')
+            K.clear_session()
+        else:
+            flash('Your feedback is negative', 'warning')
+            K.clear_session()
+    K.clear_session()
     return render_template('home.html', title='Comment', form=form)
 
 

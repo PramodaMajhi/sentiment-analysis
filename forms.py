@@ -22,7 +22,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class ReviewTextForm(FlaskForm):
-    reviewText = TextAreaField('Your Review Text',
+    reviewText = TextAreaField('Customer Feedback Text',
                         validators=[DataRequired(), Length(min=4, max=5000)])
 
-    submit = SubmitField('Analyze')
+    submit = SubmitField('Predict')
