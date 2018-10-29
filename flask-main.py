@@ -60,10 +60,10 @@ def comment():
         print(joblibPrectict)
         for index, feedback in enumerate(joblibPrectict):
             if feedback == 1:
-                flash('Your sentiment is positive!', 'success')
+                flash('Your feedback is positive!', 'success')
                 # return redirect(url_for('comment'))
             else:
-                flash('Your sentiment is negative', 'warning')
+                flash('Your feedback is negative', 'warning')
     return render_template('home.html', title='Comment', form=form)
 
 
