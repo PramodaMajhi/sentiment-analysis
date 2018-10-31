@@ -50,13 +50,13 @@ def register():
 
 
 
-@app.route("/comment", methods=['GET', 'POST'])
-def comment():
+@app.route("/deeplearning", methods=['GET', 'POST'])
+def deeplearning():
     form = ReviewTextForm()
     if form.validate_on_submit():
         print(form.reviewText.data)
-        newVector = joblib.load('classfical-vectorizer.joblib')
-        newModel = joblib.load('classical-model.joblib')
+        newVector = joblib.load('deeplearning-vectorizer.joblib')
+        newModel = joblib.load('deeplearning-model.joblib')
         myVectortest = newVector.transform([form.reviewText.data])
         actualPredict = newModel.predict(myVectortest)
         feedback = (actualPredict > 0.5)
@@ -68,6 +68,27 @@ def comment():
             K.clear_session()
     K.clear_session()
     return render_template('home.html', title='Comment', form=form)
+
+@app.route("/classical", methods=['GET', 'POST'])
+def classical():
+    form = ReviewTextForm()
+    if form.validate_on_submit():
+        print(form.reviewText.data)
+        newVector = joblib.load('classical-vectorizer.joblib')
+        newModel = joblib.load('classical-model.joblib')
+        myVectortest = newVector.transform([form.reviewText.data])
+        feedback = newModel.predict(myVectortest)
+        print("Actual predict from classical", feedback)
+
+        if feedback == 1:
+            flash('Your feedback is positive!', 'success')
+
+        else:
+            flash('Your feedback is negative', 'warning')
+
+    return render_template('classicalhome.html', title='classical', form=form)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Demo: Customer Feedback Sentiment Analysis - Deep Learning(Tensorflow)</h1>
+    <h1>Demo: Customer Feedback Sentiment Analysis - Machine Learning</h1>
     <br>
 
 <div class="content-section">
@@ -23,9 +23,10 @@
         <div class="form-group" style="display: flex; justify-content: space-between;">
 
             <input type = "submit" value = "Predict" class="btn btn-outline-info" onclick="loading();"/>
-            <a class="btn btn-outline-info" href="{{ url_for('deeplearning') }}">Clear</a>
+            <a class="btn btn-outline-info" href="{{ url_for('classical') }}">Clear</a>
 
         </div>
+
     </form>
 </div>
 
