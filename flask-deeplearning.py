@@ -55,8 +55,8 @@ def deeplearning():
     form = ReviewTextForm()
     if form.validate_on_submit():
         print(form.reviewText.data)
-        newVector = joblib.load('deeplearning-vectorizer.joblib')
-        newModel = joblib.load('deeplearning-model.joblib')
+        newVector = joblib.load('deeplearning-vectorizer-nongram.joblib')
+        newModel = joblib.load('deeplearning-model-nongram.joblib')
         myVectortest = newVector.transform([form.reviewText.data])
         actualPredict = newModel.predict(myVectortest)
         feedback = (actualPredict > 0.5)
@@ -74,8 +74,8 @@ def classical():
     form = ReviewTextForm()
     if form.validate_on_submit():
         print(form.reviewText.data)
-        newVector = joblib.load('classical-vectorizer.joblib')
-        newModel = joblib.load('classical-model.joblib')
+        newVector = joblib.load('classical-vectorizer-nongram.joblib')
+        newModel = joblib.load('classical-model-nongram.joblib')
         myVectortest = newVector.transform([form.reviewText.data])
         feedback = newModel.predict(myVectortest)
         print("Actual predict from classical", feedback)
