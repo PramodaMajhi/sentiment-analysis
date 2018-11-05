@@ -61,10 +61,10 @@ def deeplearning():
         actualPredict = newModel.predict(myVectortest)
         feedback = (actualPredict > 0.5)
         if feedback:
-            flash('Your sentiment is positive!', 'success')
+            flash('Your feedback is positive!', 'success')
             K.clear_session()
         else:
-            flash('Your sentiment is negative', 'warning')
+            flash('Your feedback is negative', 'warning')
             K.clear_session()
     K.clear_session()
     return render_template('home.html', title='Comment', form=form)
