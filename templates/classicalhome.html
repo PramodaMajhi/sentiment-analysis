@@ -4,7 +4,7 @@
     <br>
 
 <div class="content-section">
-    <form method="POST" action="">
+    <form method="POST" action="classical">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.reviewText.label(class="form-control-label", style="font-size: 18px;") }}
@@ -23,7 +23,7 @@
         <div class="form-group" style="display: flex; justify-content: space-between;">
 
             <input type = "submit" value = "Predict" class="btn btn-outline-info" onclick="loading();"/>
-            <a class="btn btn-outline-info" href="{{ url_for('classical') }}">Clear</a>
+            <a class="btn btn-outline-info" href="{{ url_for('home') }}">Next</a>
 
         </div>
 

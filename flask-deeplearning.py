@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm, LoginForm, ReviewTextForm
 from sklearn.externals import joblib
 from keras import backend as K
@@ -23,16 +23,12 @@ posts = [
 
 
 @app.route("/")
-@app.route("/home",  methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
     form = ReviewTextForm()
-    if form.validate_on_submit():
-        if form.reviewText.data == 'Good':
-            flash('Your sentiment is positive!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Your sentiment is negative', 'warning')
-    return render_template('home.html', posts=posts, form=form)
+    if request.method == 'GET':
+        form.reviewText.data = """The worst customer service period, answering service located somewhere in Asia. Charged me the wrong premiums for too long. """
+    return render_template('classicalhome.html', title='classical', form=form)
 
 
 @app.route("/about")
@@ -47,7 +43,6 @@ def register():
         flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
-
 
 
 @app.route("/deeplearning", methods=['GET', 'POST'])
@@ -69,6 +64,7 @@ def deeplearning():
     K.clear_session()
     return render_template('home.html', title='Comment', form=form)
 
+
 @app.route("/classical", methods=['GET', 'POST'])
 def classical():
     form = ReviewTextForm()
@@ -85,9 +81,10 @@ def classical():
 
         else:
             flash('Your feedback is negative', 'warning')
-
+    elif request.method == 'GET':
+        form.reviewText.data = """ I m pleasantly surprised by Blue Shield. I purchased my individual plan through Covered CA expecting the worst (after reading all these terrible reviews) but dealing with Blue Shield has not been bad at all! My only complaints about it are that it is very very expensive and I have higher copays and out of pocket expenses than I would like, but that is a commonality among all health insurance in the marketplace so I can not blame that on Blue Shield. I also wish there were more providers in- network.
+"""
     return render_template('classicalhome.html', title='classical', form=form)
-
 
 
 if __name__ == '__main__':
