@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
-import requests
-from werkzeug.utils import secure_filename
-import os, errno
+import errno
 import json
+import os
+
+import requests
+from flask import Flask, request
+from flask_restful import Resource, Api
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 api = Api(app)
@@ -78,22 +80,9 @@ api.add_resource(BreastCancer, '/breastcancer')
 UPLOAD_FOLDER = 'C:\\Users\\pmajhi01\\Documents\\Dev_BackUp'
 UPLOAD_FOLDER_VARIABLES = 'C:\\Users\\pmajhi01\\Documents\\Dev_BackUp\\variables'
 # '/tmp/tfServing/allmodels/'
-ALLOWED_EXTENSIONS = set(['txt', 'pb', 'doc', 'index', 'jpeg', 'gif', 'pptx', 'ppt', 'docx'])
+ALLOWED_EXTENSIONS = set(['pb', 'index'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_FOLDER_VARIABLES'] = UPLOAD_FOLDER_VARIABLES
-
-uploadModelSuccessJson = {
-    "success": 'true',
-    "message": "successfully uploaded"
-}
-uploadModelFailedJson = {
-    "status": 'failed',
-    "message": "No file part or No selected file",
-    "error": {
-        "code": 123,
-        "message": "An error occurred! due to model file was not selected"
-    }
-}
 
 
 def allowed_file(filename):
@@ -101,17 +90,31 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def fileList():
+success = {
+    "status": "success",
+    "message": "successfully uploaded"
+}
+
+def fileList(path):
+    success["files"] = []
     for f in request.files.getlist('file'):
-        print(f.filename)
+        filename = secure_filename(f.filename)
+        if filename.startswith("variables."):
+            variablepath = path + '\\' + 'variables'
+            ensure_dir(variablepath)
+            f.save(os.path.join(variablepath, filename))
+            success["files"].append(filename)
+        else:
+            f.save(os.path.join(path, filename))
+            success["files"].append(filename)
 
 
 def ensure_dir(directory):
-    print(directory)
+    # print(directory)
     if not os.path.exists(directory):
         try:
             os.makedirs(directory)
-            print("directory created")
+            # print("directory created")
         except OSError as e:
             if e.errno != errno.EEXITS:
                 raise
@@ -119,58 +122,37 @@ def ensure_dir(directory):
 
 class UploadModel(Resource):
     def post(self):
-
+        print("entered upload model method")
         modelInfo = request.form['modelInfo']
-        fileList()
+        print('request.get_json()', request.get_json())
+        emptyJson = {
+            "status": "failed",
+            "message": "Model information is was not supplied!"
+        }
         if modelInfo == '':
-            infojson = {
-                "message": "Model information is mandatory!"
+            return emptyJson
+        listFiles = []
+        for f in request.files.getlist('file'):
+            fname = secure_filename(f.filename)
+            print(fname)
+            listFiles.append(fname)
+
+        if 'saved_model.pb' not in listFiles:
+            fileNotPresent = {
+                "status": "failed",
+                "message": "Model file 'saved_model.pb' was not selected!"
             }
-            return infojson
+            return fileNotPresent
+
         json_string = json.loads(modelInfo)
-        # loop through the json to collect information
-        # print(json_string['sub-directory']['variables']['filename'])
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            return uploadModelFailedJson
-
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            return uploadModelFailedJson
-        if file and allowed_file(file.filename) or file.filename.startswith("variables."):
-            filename = secure_filename(file.filename)
-            # print(filename)
-            modelsucccess = {
-                "status": 'success',
-                "message": "successfully uploaded",
-                "file": filename
-            }
-            newmodel = (json_string['newmodel'])
-            modelname = (json_string['modelname'])
-
-            if filename.startswith("variables."):
-                if newmodel == 'True':
-                    newpath = app.config['UPLOAD_FOLDER'] + '\\' + modelname + '\\' + 'variables'
-                    ensure_dir(newpath)
-                    file.save(os.path.join(newpath, filename))
-            else:
-                if newmodel == 'True':
-                    newpath = app.config['UPLOAD_FOLDER'] + '\\' + modelname
-                    ensure_dir(newpath)
-                    file.save(os.path.join(newpath, filename))
-
-            return modelsucccess
-        else:
-            uploaded = {
-                "success": 'false',
-                "message": "Please upload correct model file, the extension does not support."
-            }
-            return uploaded
-
+        modelname = (json_string['modelname'])
+        version = (json_string['version'])
+        path = app.config['UPLOAD_FOLDER'] + '\\' + modelname + '\\' + version
+        ensure_dir(path)
+        fileList(path)
+        return success
 
 api.add_resource(UploadModel, '/uploadModel')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=7000,debug=True)
